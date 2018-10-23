@@ -1,17 +1,17 @@
 var canvas = document.querySelector('canvas');
-canvas.width=1200;
-canvas.height=window.innerHeight;
+canvas.width=window.innerWidth-250;
+canvas.height=window.innerHeight-25;
 
 var ctx = canvas.getContext("2d");
 
-var ball = new Ball(canvas.width/2, canvas.height-32 , 20, 5,5);
+var ball = new Ball(canvas.width/2, canvas.height-32 , 20, 3,4);
 var paddale = new Paddale(canvas.width/2 -50 , canvas.height-12 , 100,10);
 var brickArray = [];
-
+var points =0 ;
 var aKeyDown = false;
 var dKeyDown = false;
 
-var life = 1;
+var life = 3;
 
 function Ball(x,y,radius,dx,dy,color){
 	this.x=x;
@@ -71,13 +71,13 @@ function Paddale(x, y, len, breadth){
 		if(aKeyDown){
 			if(paddale.x > 0)
 			{
-				this.x-=5;
+				this.x-=8;
 			}
 		}
 		if(dKeyDown){
 			if(paddale.x + this.len < canvas.width)
 			{
-				this.x+=5;
+				this.x+=8;
 			}
 		}
 		this.draw();
@@ -102,37 +102,51 @@ function Bricks(x, y, len, breadth){
 	}
 }
 
-function bricksLayer(){
+function bricksLayerpositioning(){
 	
-	var offset = 100;
+	var offset = 50;
 		var padding = 50;
 		var x=offset;
 		var y=  offset;
-	for(var i=0;i<3,  i++)
+	for(var i=0;i<3;i++)
 	{
 		x=offset;
 		
-		for(var j=0 ; j< 5 ; j++)
+		for(var j=0 ; j< 7 ; j++)
 		{
 			
-			brickArray.push(new Bricks( x , y , 30,30);
-			x= x + 30 + padding;
+			brickArray.push(new Bricks( x , y , 100,30));
+			x= x + 100 + padding;
 		}
 		
-		y= y+padding+30;
+		y= y+padding;
 	}
 }
 		
+bricksLayerpositioning();
+function renderbricksLayer(){
+	for(var i=0;i <brickArray.length; i++)
+	{
+		if(brickArray[i].bricklife ===true)
+		brickArray[i].draw();
+	}
+}
 
-		function renderbricksLayer()
+function ball_brick_collision (){
+	for(var i=0 ;i < brickArray.length; i++)
+	{
+		if(brickArray[i].bricklife==true)
 		{
-			for(var i=0;i <brickArray.length; i++)
-			{
-				brickArray[i].draw();
-			}
+			if(brickArray[i].x - ball.x < ball.radius && ball.x -(brickArray[i].x + brickArray[i].len) < ball.radius &&
+					ball.y - (brickArray[i].y + brickArray[i].len) <ball.radius && ball.y - brickArray[i].y <ball.radius)
+					{
+						brickArray[i].bricklife= false;
+						ball.dy = -ball.dy;
+					
+					}
 		}
-
-
+	}
+}
 
 document.onkeydown = function(e){
 	if(e.keyCode === 65 )
@@ -178,10 +192,6 @@ function ball_lowerbound_Collision()
 			life--;
 		}
 		
-		else
-		{
-			document.getElementById("demo").innerHTML = "GameOver";
-		}
 			
 	}
 }
@@ -195,11 +205,7 @@ function resetGame(){
 	paddale.y = canvas.height - 12;
 }
 	
-	
-	
-
 function animate(){
-	
 	
 	requestAnimationFrame(animate);
 	if(life){
@@ -208,7 +214,8 @@ function animate(){
 	paddale.update();
 	ball_paddale_Collision();
 	ball_lowerbound_Collision();
-	bricksLayer();
+	renderbricksLayer();
+	ball_brick_collision();
 	}
 }
 
