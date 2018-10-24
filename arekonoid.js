@@ -107,12 +107,12 @@ function bricksLayerpositioning(){
 	var offset = 50;
 		var padding = 50;
 		var x=offset;
-		var y=  offset;
+		var y=  offset+ 30;
 	for(var i=0;i<3;i++)
 	{
 		x=offset;
 		
-		for(var j=0 ; j< 7 ; j++)
+		for(var j=0 ; j< 10 ; j++)
 		{
 			
 			brickArray.push(new Bricks( x , y , 100,30));
@@ -142,8 +142,17 @@ function ball_brick_collision (){
 					{
 						brickArray[i].bricklife= false;
 						ball.dy = -ball.dy;
+						points = points + 10;
 					
 					}
+					
+			if(points === 300)
+			{
+				ctx.font="100px Comic Sans MS";
+				ctx.fillStyle = "red";
+				ctx.textAlign = "center";
+				ctx.fillText("You Win!" , canvas.width/2 , canvas.height/2);
+			}
 		}
 	}
 }
@@ -185,16 +194,37 @@ function ball_lowerbound_Collision()
 {
 	if(canvas.height-ball.radius < ball.y)
 	{
+		life--;
 		
 		if(life)
 		{
 			resetGame();
-			life--;
+			
+		}
+		
+		else{
+			console.log("Game Over");
+			ctx.font="100px Comic Sans MS";
+			ctx.fillStyle = "red";
+			ctx.textAlign = "center";
+			ctx.fillText("Game Over" , canvas.width/2 , canvas.height/2);
 		}
 		
 			
 	}
 }
+
+function msg(){
+	ctx.font="45px Comic Sans MS";
+	ctx.fillStyle = "red";
+	ctx.textAlign = "center";
+	ctx.fillText("Score : " , 100 , 60);
+	ctx.fillText(points , 220,60);
+	ctx.fillText("Life :" , canvas.width-200, 60);
+	ctx.fillText(life , canvas.width-125, 60);
+
+}
+	
 
 function resetGame(){
 	ball.x= canvas.width/2;
@@ -208,14 +238,18 @@ function resetGame(){
 function animate(){
 	
 	requestAnimationFrame(animate);
-	if(life){
+	if(life && points < 300){
+		
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	ball.moveball();
 	paddale.update();
-	ball_paddale_Collision();
 	ball_lowerbound_Collision();
+	ball_paddale_Collision();
 	renderbricksLayer();
 	ball_brick_collision();
+	msg();
+	
+	
 	}
 }
 
