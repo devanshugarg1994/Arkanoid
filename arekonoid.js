@@ -5,7 +5,7 @@ canvas.height=window.innerHeight-25;
 var ctx = canvas.getContext("2d");
 
 var ball = new Ball(canvas.width/2, canvas.height-32 , 20, 4,5,"blue");
-var ball2 = new Ball(canvas.width/2, canvas.height-32 , 20, 7,-7,"red");
+var ball2 = new Ball(canvas.width/2, canvas.height-32 , 20, 4,-5,"red");
 var paddale = new Paddale(canvas.width/2 -50 , canvas.height-12 , 100,10);
 var brickArray = [];
 var points =0 ;
