@@ -5,7 +5,7 @@ canvas.height=window.innerHeight-25;
 var ctx = canvas.getContext("2d");
 
 var ball = new Ball(canvas.width/2, canvas.height-32 , 20, 4,5,"blue");
-var ball2 = new Ball(canvas.width/2, canvas.height-32 , 20, 7,7,"red");
+var ball2 = new Ball(canvas.width/2, canvas.height-32 , 20, 7,-7,"red");
 var paddale = new Paddale(canvas.width/2 -50 , canvas.height-12 , 100,10);
 var brickArray = [];
 var points =0 ;
@@ -13,6 +13,9 @@ var aKeyDown = false;
 var dKeyDown = false;
 
 var life = 3;
+
+
+//Ball
 
 function Ball(x,y,radius,dx,dy,color){
 	this.x=x;
@@ -53,7 +56,7 @@ function Ball(x,y,radius,dx,dy,color){
 	
 }
 	
-	
+//Paddale	
 function Paddale(x, y, len, breadth){
 	this.x=x;
 	this.y=y;
@@ -87,6 +90,8 @@ function Paddale(x, y, len, breadth){
 		
 }
 
+
+//bricks
 function Bricks(x, y, len, breadth){
 	this.x=x;
 	this.y=y;
@@ -122,9 +127,11 @@ function bricksLayerpositioning(){
 		
 		y= y+padding;
 	}
-}
-		
-bricksLayerpositioning();
+}		
+bricksLayerpositioning(); //Input the position of bricks
+
+
+//Rendering every brick if alive
 function renderbricksLayer(){
 	for(var i=0;i <brickArray.length; i++)
 	{
@@ -132,6 +139,7 @@ function renderbricksLayer(){
 		brickArray[i].draw();
 	}
 }
+
 
 function ball_brick_collision (){
 	for(var i=0 ;i < brickArray.length; i++)
@@ -190,6 +198,7 @@ document.onkeyup = function(e){
 
 
 function ball_paddale_Collision()
+
 {
 if(ball.x > paddale.x -ball.radius && ball.x < paddale.x + paddale.len + ball.radius && paddale.y-ball.y < ball.radius) 
 	ball.dy = -ball.dy;
@@ -218,6 +227,54 @@ function ball_lowerbound_Collision()
 			
 	}
 }
+
+//for ball 2
+function ball2_paddale_Collision()
+{
+if(ball2.x > paddale.x -ball2.radius && ball2.x < paddale.x + paddale.len + ball2.radius && paddale.y-ball2.y < ball2.radius) 
+	ball2.dy = -ball2.dy;
+}
+
+
+function ball2_lowerbound_Collision()
+{
+	if(canvas.height-ball2.radius < ball2.y)
+	{
+		
+		ballbonusfeatureOn=false;
+			
+	}
+}
+function ball2_brick_collision (){
+	for(var i=0 ;i < brickArray.length; i++)
+	{
+		if(brickArray[i].bricklife ===true)
+		{
+			if(brickArray[i].x - ball2.x < ball2.radius && ball2.x -(brickArray[i].x + brickArray[i].len) < ball2.radius &&
+					ball2.y - (brickArray[i].y + brickArray[i].len) <ball2.radius && ball2.y - brickArray[i].y <ball2.radius)
+					{
+						Lifeincrease(i);
+						pointBonus(i);
+						paddalebonusincrease(i);
+						//   ballbonusfeature(i); disabling doble bonus featrue 
+						brickArray[i].bricklife= false;
+						ball2.dy = -ball2.dy;
+						points = points + 10;
+					
+					}
+					
+			if(points === 320)
+			{
+				ctx.font="100px Comic Sans MS";
+				ctx.fillStyle = "red";
+				ctx.textAlign = "center";
+				ctx.fillText("You Win!" , canvas.width/2 , canvas.height/2);
+			}
+		}
+	}
+}
+
+
 
 function msg(){
 	ctx.font="45px Comic Sans MS";
@@ -313,9 +370,13 @@ function animate(){
 		
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	ball.moveball();
-	if (ballbonusfeatureOn === true)
+	if (ballbonusfeatureOn === true )
 	{
+		
 		ball2.moveball();
+		ball2_paddale_Collision();
+		ball2_lowerbound_Collision();
+		ball2_brick_collision ();
 	}
 	paddale.update();
 	ball_lowerbound_Collision();
